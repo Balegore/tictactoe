@@ -1,0 +1,42 @@
+body{
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+}
+.gameBoard{
+    display: flex;
+    flex-flow: column wrap;
+    height: 600px;
+    width: 600px;
+    margin-top: 50px;    
+}
+
+.row{
+    display: flex;
+    flex-flow: row wrap;
+    flex: 1;
+}
+
+.square{
+    border: 2px solid black;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.square.top{
+    border-top: none;
+}
+
+.square.bottom{
+    border-bottom: none;
+}
+
+.square.left{
+    border-left: none;
+}
+
+.square.right{
+    border-right: none;
+}
