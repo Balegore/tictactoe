@@ -1,10 +1,10 @@
-
 //gameboard array
 const gameboard = (() => {
     let board = [];
 
     const changeState = function(player, index){
         board[index] = player;
+        console.log(board);
     };
     const getState = function(index){
         return board[index];
@@ -18,6 +18,42 @@ const gameboard = (() => {
 const player = (name, symbol) => {
     return{name, symbol}
 };
+
+const playerSelect = (() => {
+    let playerType;
+    //cache DOM
+    const startBox = document.querySelector('.startGame');
+    const startBoxButtons = document.querySelectorAll('button');
+    //bind events
+    startBoxButtons.forEach(button => button.addEventListener('click', (event) => buttonPress(event.target)));
+   
+    function buttonPress(target){
+        switch(target.id){
+            case "vsAI":
+                playerType = "AI";
+                break;
+            case "vsPlayer":
+                playerType = "player";
+                break;
+            case "play":
+                player();
+                player();
+                break;
+            default:
+                break;
+        }
+    }
+
+    function toggleHidden(target){
+        if(target.classList.contains('hidden')){
+            target.classList.remove('hidden');
+        }
+        else{
+            target.classList.add('hidden');
+        }
+    }
+      
+})();
 
 //module handle game logic
 const game = (() => {
@@ -33,29 +69,22 @@ const game = (() => {
         [2,4,6]
     ];
     let gameWon = false
-    //cache DOM
-    const squareDIV = document.querySelectorAll('.square'); 
+    let symbol = "X";  
+    
+    //cache DOM 
     const gameboardDIV = document.querySelector('.gameBoard');   
     //bind event   
-    bindSquares();
-
-    function bindSquares(){
-       
-        if(gameWon == false){
-            squareDIV.forEach(square => square.addEventListener('click', () => playGame(square.id)));
-        }
-        else if(gameWon == true){
-            console.log('ran event remover');
-            squareDIV.forEach(square => square.removeEventListener('click', () => playGame(square.id)));
-        }
-    }
+    gameboardDIV.addEventListener('click', (event) => playGame(event.target));
 
     function playGame(target){            
-        gameboard.changeState("X", target);
+        console.log(target.id);
+        gameboard.changeState(symbol, target.id);
+        if(gameWon == false){renderBoard(target);}
         gameState();       
-        render();
+        symbol = (symbol == "X")? "O": "X";
     };
 
+    //check against array of win conditions to see if won 
     function gameState(){
        for(id in winConditions){
        if(  gameboard.getState(winConditions[id][0]) == gameboard.getState(winConditions[id][1]) && 
@@ -63,34 +92,12 @@ const game = (() => {
             gameboard.getState(winConditions[id][0]) != undefined){
                 console.log("gameover");
                 gameWon = true;
-                bindSquares();
             }     
        }
     }
 
-    //redraw DOM
-    function render() {    
-        for(let id in squareDIV)
-        {
-            let symbol = gameboard.getState(id);
-            if(symbol === undefined) {
-                squareDIV[id].innerText = "";
-               
-            }
-            else{                
-                squareDIV[id].innerText = symbol;
-            }
+    //draw symbol to clicked square
+    function renderBoard(targetHTML) {
+        targetHTML.innerText = gameboard.getState(targetHTML.id);
         }
-        if(gameWon == true)
-        {          
-            let HTML = document.createElement('div');
-            HTML.className = 'winlose';
-            HTML.innerText = 'game over';
-            document.body.appendChild(HTML);
-        }
-    }
 })();
-
-const playerSelect = function(){
-
-}();
