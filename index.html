@@ -27,29 +27,27 @@
             <div class="square right bottom" id="8"></div>
         </div>
     </div>
-    <div class ="startGame">
-        <div class="gameSelect">
+    <div class="startMenu" id="menuBox">
+        <div id="playerSelect">
             <span>Would you like to play</span>
+            <div>
+                <button id="vsAI">vs AI</button>
+                <span>or</span>
+                <button id="vsPlayer">2 Player</button>
+            </div>
         </div>
-        <div>
-            <button id="vsAI">vs AI</button>
-            <span>or</span>
-            <button id="vsPlayer">2 Player</button>
-        </div>
-        <div class ="playerSelect hidden">
-            <form>
-                <ul>
-                    <li>
-                        <label for="p1" >Player Name</label>
-                        <input name="p1" id="p1" class="playerName" autocomplete="off">
-                    </li>
-                    <li>
-                        <label for="p2">Player Name</label>
-                        <input name="p2" id="p2" class="playerName" autocomplete="off">
-                    </li>
-                    <button id="play">PLAY</button>
-                </ul>
-            </form>
+        <div class ="hidden" id="playerNames">
+            <ul>
+                <li>
+                    <label for="p1" >Player Name</label>
+                    <input name="p1" id="p1" class="playerName" autocomplete="off">
+                </li>
+                <li>
+                    <label for="p2">Player Name</label>
+                    <input name="p2" id="p2" class="playerName" autocomplete="off">
+                </li>
+                <button id="play">PLAY</button>
+            </ul>          
         </div>        
     </div>
 </body>

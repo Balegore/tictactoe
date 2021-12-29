@@ -48,11 +48,7 @@ body{
     border-right: none;
 }
 
-.hidden{
-    display: none;
-}
-
-.startGame{
+.startMenu{
     display: flex;
     flex-flow: column;
     align-items: center;
@@ -69,4 +65,10 @@ button{
     height: 40px;
     width: 150px;
     font-size: 24px;
+}
+
+
+/*needs to be at bottom of style sheet to overide all other display properties*/
+.hidden{
+    display: none;
 }
