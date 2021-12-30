@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="title">Welcome to Tic-Tac-Toe</div>
-    <div class="gameBoard hidden">
+    <div class="gameBoard">
         <div class="row">
             <div class="square left top" id="0"></div>
             <div class="square top" id="1"></div>
@@ -36,18 +36,15 @@
                 <button id="vsPlayer">2 Player</button>
             </div>
         </div>
-        <div class ="hidden" id="playerNames">
-            <ul>
-                <li>
-                    <label for="p1" >Player Name</label>
+        <div class ="hidden" id="playerNames">            
+                    <label for="p1" >Player 1=</label>
                     <input name="p1" id="p1" class="playerName" autocomplete="off">
-                </li>
-                <li>
-                    <label for="p2">Player Name</label>
+                
+                    <label for="p2">Player 2</label>
                     <input name="p2" id="p2" class="playerName" autocomplete="off">
-                </li>
+               <div>
                 <button id="play">PLAY</button>
-            </ul>          
+               </div>    
         </div>        
     </div>
 </body>
