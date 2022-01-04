@@ -22,12 +22,13 @@ const gameboard = (() => {
         return board[index];
     }
     const reset = function() {
+        board.length = 0;
     }
 
     //check against array of win conditions to see if won 
     const gameWon = function(){
         for(id in winConditions){
-            if(  board[winConditions[id][0]] == board[winConditions[id][1]] && 
+            if( board[winConditions[id][0]] == board[winConditions[id][1]] && 
                 board[winConditions[id][0]] == board[winConditions[id][2]] && 
                 board[winConditions[id][0]] != undefined){
                         console.log("gameover");
@@ -44,55 +45,95 @@ const game = (() => {
     let player = [];
     let playerType;
     let turn = 0;
+    const boardRenderEvent = (event) => playGame(event.target); //used to set gameboard to be able to play
 
     //cache DOM
-    const startBoxButtons = document.querySelectorAll('button');
-    const menuBoxDOM = document.querySelector('#menuBox');
-    const playerSelectMenuDOM = document.querySelector('#playerSelect');
-    const playerNameMenuDOM = document.querySelector('#playerNames');
-    const gameboardDOM = document.querySelector('.gameBoard');
-    const nameInput = playerNameMenuDOM.querySelectorAll('input'); 
+    const gameboardHTML = document.querySelector('.gameBoard'); //gameboard
+    const startBoxButtons = document.querySelectorAll('button'); //buttons
+
+    //menus
+    const scoreBoxHTML = document.querySelector('#scoreBox'); 
+    const playerSelectMenuHTML = document.querySelector('#playerSelect');
+    const playerNameMenuHTML = document.querySelector('#playerNames');
+    const nameInputHTML = playerNameMenuHTML.querySelectorAll('input');
+    const p1ScoreHTML = document.querySelector('#playerOneScore');
+    const p2ScoreHTML = document.querySelector('#playerTwoScore');
+    const p1NameHTML = document.querySelector('#playerOneName');
+    const p2NameHTML = document.querySelector('#playerTwoName');
+    const winMsgHTML = document.querySelector('#winMessage');
 
     //bind buttons       
     startBoxButtons.forEach(button => button.addEventListener('click', (event) => buttonPress(event.target)));
 
-    const playGame = function (target){        
-        console.log(target.id);
-        gameboard.changeState(player[turn].symbol, target.id);
-        if(gameboard.gameWon()){
-            console.log(`${player[turn].name} wins!`)            
+    const playGame = function (target){
+        if(!(gameboard.getBoardIndex(target.id)) && target.id){ //check to make sure square isn't filled and not a row div       
+            console.log(target.id);
+            gameboard.changeState(player[turn].symbol, target.id);
+            if((gameboard.gameWon())){
+                winMsgHTML.innerText = `${player[turn].name} wins!`;
+                player[turn].score++;
+                renderScore();
+                setBoardListener(true);                     
+            }
+            else{   
+                turn = (turn == 0)? 1: 0;
+            }        
+            renderBoard(target);      
         }
-        else{   
-            turn = (turn == 0)? 1: 0;
-        }        
-        renderBoard(target);      
     };
 
     //draw symbol to clicked square
     const renderBoard = function (targetHTML) {
         targetHTML.innerText = gameboard.getBoardIndex(targetHTML.id);
         }     
-        
-           
+            
+    function setBoardListener(gameover){
+        if(gameover){
+            gameboardHTML.removeEventListener('click', boardRenderEvent);   
+        }
+        else{
+            gameboardHTML.addEventListener('click', boardRenderEvent);
+        }
+    };
+
+    function renderScore(){
+        p1NameHTML.innerText = (player[0].name);
+        p1ScoreHTML.innerText = (player[0].score);
+        p2NameHTML.innerText = (player[1].name);
+        p2ScoreHTML.innerText = (player[1].score);
+    }
+    
+    function resetBoard(){
+        for(let i = 0; i <=8; i++){
+            document.getElementById(i).innerText = "";
+        }
+    }
+    
     function buttonPress(target){
         switch(target.id){
             case "vsAI":
                 playerType = "AI";
-                toggleHidden(playerSelectMenuDOM);
-                toggleHidden(playerNameMenuDOM);
+                toggleHidden(playerSelectMenuHTML);
+                toggleHidden(playerNameMenuHTML);
                 break;
             case "vsPlayer":
                 playerType = "human";
-                toggleHidden(playerSelectMenuDOM);
-                toggleHidden(playerNameMenuDOM);
+                toggleHidden(playerSelectMenuHTML);
+                toggleHidden(playerNameMenuHTML);
                 break;
             case "play":               
-                player[0] = createPlayer(nameInput[0].value, 'X');
-                player[1] = createPlayer(nameInput[1].value, 'O');
-                toggleHidden(menuBoxDOM);
+                player[0] = createPlayer(nameInputHTML[0].value, 'X');
+                player[1] = createPlayer(nameInputHTML[1].value, 'O');
+                toggleHidden(playerNameMenuHTML);
+                renderScore();
+                toggleHidden(scoreBoxHTML);
                 //bind board
-                gameboardDOM.addEventListener('click', (event) => playGame(event.target));
+                setBoardListener(false);
                 break;
+            case "reset":
+                gameboard.reset();
+                resetBoard();
+                setBoardListener(false);
             default:
                 break;
         }
