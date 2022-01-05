@@ -1,6 +1,7 @@
 //factory function creates the players and keeps their score
-const createPlayer = (name, symbol) => {
+const createPlayer = (nameInput, symbol) => {
     let score = 0;
+    let name = (nameInput === "")? symbol: nameInput.toString();
     return{name, symbol, score}
 };
 
@@ -44,7 +45,8 @@ const gameboard = (() => {
 const game = (() => {
     let player = [];
     let playerType;
-    let turn = 0;
+    let turn;
+    let tieCounter = 0;
     const boardRenderEvent = (event) => playGame(event.target); //used to set gameboard to be able to play
 
     //cache DOM
@@ -52,7 +54,7 @@ const game = (() => {
     const startBoxButtons = document.querySelectorAll('button'); //buttons
 
     //menus
-    const scoreBoxHTML = document.querySelector('#scoreBox'); 
+    const resetGameHTML = document.querySelector('#resetGame'); 
     const playerSelectMenuHTML = document.querySelector('#playerSelect');
     const playerNameMenuHTML = document.querySelector('#playerNames');
     const nameInputHTML = playerNameMenuHTML.querySelectorAll('input');
@@ -60,7 +62,7 @@ const game = (() => {
     const p2ScoreHTML = document.querySelector('#playerTwoScore');
     const p1NameHTML = document.querySelector('#playerOneName');
     const p2NameHTML = document.querySelector('#playerTwoName');
-    const winMsgHTML = document.querySelector('#winMessage');
+    const gameMessageHTML = document.querySelector('#gameMessage');
 
     //bind buttons       
     startBoxButtons.forEach(button => button.addEventListener('click', (event) => buttonPress(event.target)));
@@ -70,13 +72,21 @@ const game = (() => {
             console.log(target.id);
             gameboard.changeState(player[turn].symbol, target.id);
             if((gameboard.gameWon())){
-                winMsgHTML.innerText = `${player[turn].name} wins!`;
+                renderGameMessage(`${player[turn].name} wins!`);
                 player[turn].score++;
                 renderScore();
                 setBoardListener(true);                     
             }
+            else if(tieCounter >= 8){
+                renderGameMessage(`Tie Game!`);
+                setBoardListener(true);  
+            }
+                
+            
             else{   
                 turn = (turn == 0)? 1: 0;
+                tieCounter++;
+                renderGameMessage(`${player[turn].name}'s turn.`);
             }        
             renderBoard(target);      
         }
@@ -96,11 +106,19 @@ const game = (() => {
         }
     };
 
+    function renderGameMessage(gameMessageText){
+        gameMessageHTML.innerText = gameMessageText; 
+    }
+
     function renderScore(){
         p1NameHTML.innerText = (player[0].name);
         p1ScoreHTML.innerText = (player[0].score);
         p2NameHTML.innerText = (player[1].name);
         p2ScoreHTML.innerText = (player[1].score);
+    }
+
+    const setTurnOrder = () => {
+        turn = Math.round(Math.random());
     }
     
     function resetBoard(){
@@ -124,14 +142,19 @@ const game = (() => {
             case "play":               
                 player[0] = createPlayer(nameInputHTML[0].value, 'X');
                 player[1] = createPlayer(nameInputHTML[1].value, 'O');
+                setTurnOrder();
                 toggleHidden(playerNameMenuHTML);
                 renderScore();
-                toggleHidden(scoreBoxHTML);
+                renderGameMessage(`${player[turn].name} starts.`);
+                toggleHidden(resetGameHTML);
                 //bind board
                 setBoardListener(false);
                 break;
             case "reset":
                 gameboard.reset();
+                tieCounter = 0;
+                setTurnOrder();
+                renderGameMessage(`${player[turn].name} starts.`);
                 resetBoard();
                 setBoardListener(false);
             default:
@@ -147,4 +170,7 @@ const game = (() => {
             target.classList.add('hidden');
         }
     }
+
+    //game message texts
+    
 })();

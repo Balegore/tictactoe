@@ -9,7 +9,17 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="title">Welcome to Tic-Tac-Toe</div>
+    <div class="scoreBox">            
+        <div class="scoreContainer">              
+            <div class="scoreName" id="playerOneName">Player 1</div>               
+            <div class="scoreName" id="playerTwoName">Player 2</div>            
+        </div>
+        <div class="scoreContainer">
+            <div class="scoreNumber" id="playerOneScore"></div>                
+            <div class="scoreNumber" id="playerTwoScore"></div>
+        </div>            
+    </div>  
+    <div id="gameMessage">Welcome to tic-tac-toe</div>
     <div class="gameBoard">
         <div class="row">
             <div class="square left top" id="0"></div>
@@ -27,8 +37,8 @@
             <div class="square right bottom" id="8"></div>
         </div>
     </div>
-    <div class="startMenu" id="menuBox">
-        <div class="menu" id="playerSelect">
+    <div class="menu" id="menuBox">
+        <div id="playerSelect">
             <span>Would you like to play</span>
             <div>
                 <button id="vsAI">vs AI</button>
@@ -36,28 +46,18 @@
                 <button id="vsPlayer">2 Player</button>
             </div>
         </div>
-        <div class ="hidden menu" id="playerNames">            
+        <div class ="hidden" id="playerNames">            
                     <label for="p1">Player 1:</label>
-                    <input name="p1" id="p1" class="playerName" autocomplete="off">
-                
+                    <input name="p1" id="p1" class="playerName" autocomplete="off">                
                     <label for="p2">Player 2:</label>
                     <input name="p2" id="p2" class="playerName" autocomplete="off">
                <div>
                 <button id="play">PLAY</button>
                </div>
-        </div>        
-        <div class="hidden menu" id="scoreBox">
-            <div id="winMessage"></div>
-            <div>
-                <div id="playerOneName"></div>
-                <div id="playerOneScore">0</div>
-            </div>
-            <div>
-                <div id="playerTwoName"></div>
-                <div id="playerTwoScore">0</div>
-            </div>
-            <button id="reset">Reset</button>
-        </div>    
+        </div>
+        <div class ="hidden" id="resetGame">
+            <button id="reset">New Game</button>      
+        </div>
     </div>
 </body>
 </html>
