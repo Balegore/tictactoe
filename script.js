@@ -157,8 +157,9 @@ const game = (() => {
             tieCounter++;
             displayController.renderGameMessage(`${player[turn].name}'s turn.`);
         }        
-        displayController.renderBoard(target);      
-        if(turn == 1 && !gameboard.checkWin()){ 
+        displayController.renderBoard(target);
+        
+        if(vsAI && turn == 1 && !gameboard.checkWin()){ 
             let move = AI.getMove();
             console.log(move);
             playGame(move); 
