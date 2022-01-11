@@ -21,7 +21,6 @@ const gameboard = (() => {
 
     const changeState = function(playerSymbol, index){
         board[index] = playerSymbol;
-        console.log(board);
     };
     const getBoardIndex = function(index){
         return board[index];
@@ -53,22 +52,21 @@ const gameboard = (() => {
 })();
 
 const AI = (function() {
-        
+            
     function minimax(testBoard, maximizing, depthCounter, maxDepth){
         let gamewon = gameboard.gameOver(testBoard); 
          
-        if(gamewon || depthCounter >= maxDepth){
+        if(gamewon || depthCounter == maxDepth){
             let score = 0;
             if(gamewon){ 
                 if(maximizing){ 
                     score = 10;
                 }
                 else{
-                        score = -10;
+                    score = -10;
                     }   
                 }    
-            console.log(`Got to the end score = ${score} depth counter = ${depthCounter}`);
-            return (score-depthCounter);
+            return (score+depthCounter);
         }
 
         
@@ -79,8 +77,9 @@ const AI = (function() {
                     if(testBoard[i] == undefined){
                         testBoard[i] = 'O';                                  
                         let eval = minimax(testBoard, false, (depthCounter + 1), maxDepth)
-                        testBoard[i] = undefined;                                               
-                        maxEval = Math.max(maxEval, eval);                        
+                        testBoard[i] = undefined;
+                        maxEval = Math.max(maxEval, eval);
+                        
                     }
                 }                    
                 return maxEval;                    
@@ -90,7 +89,7 @@ const AI = (function() {
                 for(let n = 0; n<=8; n++){ 
                     if(testBoard[n] == undefined){
                         testBoard[n]= 'X';
-                        let eval = minimax(testBoard, true, depthCounter + 1, maxDepth);
+                        let eval = minimax(testBoard, true, (depthCounter + 1), maxDepth);
                         testBoard[n] = undefined;
                         minEval = Math.min(minEval, eval);
                     }                                
@@ -111,26 +110,24 @@ const AI = (function() {
     }
 
     const getMove = function() {        
-        let newScore = 0;
-        let oldScore = Number.NEGATIVE_INFINITY
-        let move;
         let testBoard = gameboard.getBoard();
-        let maxDepth = getMaxDepth(testBoard); 
+        let maxDepth = getMaxDepth(testBoard);
+        let bestScore = Number.POSITIVE_INFINITY;
+        let bestMove;
 
-        console.log(`starting board = ${testBoard}`)
-
-        for(let i = 0; i <= 8; i++){                     
-            console.log(`loop board = ${testBoard} with ${maxDepth} empty spaces`);
+        for(let i = 0; i<=8; i++){
             if(testBoard[i] == undefined){
-                newScore = minimax(testBoard, true, 0, 1);    
-                if(newScore > oldScore){ 
-                    move = i;
-                }                        
-                oldScore = newScore;
+                testBoard[i] = 'O';
+                let newScore = minimax(testBoard, false, 1, maxDepth);
+                testBoard[i] = undefined;
+                console.log(`${i} has a score of ${newScore}`)
+                if(newScore < bestScore){
+                    bestMove = i;
+                    bestScore = newScore;
+                }      
             }
-        };
-        console.log(move);
-        return (move);
+        }
+        return (bestMove);
     };
     return {getMove};   
 })();
@@ -142,33 +139,31 @@ const game = (() => {
     let turn;
     let tieCounter = 0;   
 
-    const playGame = function (target){
-        if(!(gameboard.getBoardIndex(target)) && target){ //check to make sure square isn't filled and not a row div       
-            gameboard.changeState(player[turn].symbol, target);
-            if((gameboard.checkWin())){
-                displayController.renderGameMessage(`${player[turn].name} wins!`);
-                player[turn].score++;
-                displayController.renderScore(player);
-                displayController.removeBoardListener();                   
-            }
-            else if(tieCounter >= 8){
-                displayController.renderGameMessage(`Tie Game!`);
-                displayController.removeBoardListener();
-            }                
-            
-            else{               
-                turn = (turn == 0)? 1: 0;                
-                tieCounter++;
-                displayController.renderGameMessage(`${player[turn].name}'s turn.`);
-            }        
-            displayController.renderBoard(target);      
-            
-            if(vsAI && !gameboard.checkWin()){
-                let move = AI.getMove();
-                console.log(move);                     
-            }
-
+    const playGame = function (target){      
+        gameboard.changeState(player[turn].symbol, target);
+        if((gameboard.checkWin())){
+            displayController.renderGameMessage(`${player[turn].name} wins!`);
+            player[turn].score++;
+            displayController.renderScore(player);
+            displayController.removeBoardListener();                   
         }
+        else if(tieCounter >= 8){
+            displayController.renderGameMessage(`Tie Game!`);
+            displayController.removeBoardListener();
+        }                
+        
+        else{               
+            turn = (turn == 0)? 1: 0;                
+            tieCounter++;
+            displayController.renderGameMessage(`${player[turn].name}'s turn.`);
+        }        
+        displayController.renderBoard(target);      
+        if(turn == 1 && !gameboard.checkWin()){ 
+            let move = AI.getMove();
+            console.log(move);
+            playGame(move); 
+        }                    
+
     };
 
    
@@ -210,7 +205,11 @@ const game = (() => {
 
 //handle page manipulation
 const displayController = (() =>{    
-    const boardRenderEvent = (event) => game.playGame(event.target.id); //used to set gameboard to be able to play
+    //used to set gameboard to be able to play
+    const boardRenderEvent = (event) => {        
+        if(!(gameboard.getBoardIndex(event.target.id)) && event.target.id){ //check to make sure square isn't filled and not a row div 
+            game.playGame(event.target.id)}
+    } 
 
     //cache DOM
     const gameboardHTML = document.querySelector('.gameBoard'); //gameboard
