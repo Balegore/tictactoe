@@ -84,19 +84,20 @@ button{
 .scoreBox{
 display: flex;
 flex-flow: column wrap;
-background-color: lightgray;
+
 border-radius: 5px;
 min-width: 200px;
 align-items: center;
 padding: 2px;
 justify-content: space-between;
+margin-bottom: 10px;
 }
 
 .scoreContainer{
     display :flex;
     flex-flow: row wrap;
     align-items: center;
-    gap: 40px;
+    gap: 300px;
     text-align: center;      
 }
 
