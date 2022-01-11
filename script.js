@@ -5,9 +5,6 @@ const createPlayer = (nameInput, symbol) => {
     return{name, symbol, score}
 };
 
- 
-
-
 //gameboard array
 const gameboard = (() => {
     let board = [];
